@@ -156,11 +156,8 @@ static void stratahero_populate_highscores_widget(StrataHeroApp* app, bool is_qu
 }
 
 static void stratahero_show_highscores(StrataHeroApp* app, bool is_quiz) {
-    const char* path = is_quiz ? QUIZ_SCORES_PATH : GAME_SCORES_PATH;
-    HighScoreList* scores = is_quiz ? &app->quiz_scores : &app->game_scores;
     StrataHeroView view = is_quiz ? StrataHero_View_QuizHighscores : StrataHero_View_GameHighscores;
 
-    highscores_load(scores, path);
     stratahero_populate_highscores_widget(app, is_quiz);
     stratahero_switch_view(app, view);
 }
@@ -196,7 +193,6 @@ static void name_entry_callback(void* context) {
 
 static void stratahero_handle_game_end(StrataHeroApp* app) {
     int score = stratahero_game_widget_get_score(app->game_widget);
-    highscores_load(&app->game_scores, GAME_SCORES_PATH);
     if (highscores_qualifies(&app->game_scores, score)) {
         stratahero_start_name_entry(app, score, false);
     } else {
@@ -206,7 +202,6 @@ static void stratahero_handle_game_end(StrataHeroApp* app) {
 
 static void stratahero_handle_quiz_end(StrataHeroApp* app) {
     int score = quiz_widget_get_score(app->quiz_widget);
-    highscores_load(&app->quiz_scores, QUIZ_SCORES_PATH);
     if (highscores_qualifies(&app->quiz_scores, score)) {
         stratahero_start_name_entry(app, score, true);
     } else {
@@ -406,6 +401,9 @@ static void stratagem_train_callback(const Stratagem* stratagem, void* context) 
 StrataHeroApp* stratahero_app_alloc() {
     StrataHeroApp* app = malloc(sizeof(StrataHeroApp));
     stratahero_load_settings(&app->settings);
+
+    highscores_load(&app->game_scores, GAME_SCORES_PATH);
+    highscores_load(&app->quiz_scores, QUIZ_SCORES_PATH);
 
     app->gui = furi_record_open(RECORD_GUI);
 

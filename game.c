@@ -551,6 +551,9 @@ static void enter_callback(void* context) {
     with_widget_model(widget, model, {
         model->current_round = 0;
         model->current_view = GameView_Intro;
+        model->score = 0;
+        model->score_popup_points = 0;
+        model->stats_view_count = 0;
         next_round(model);
     }, true);
     furi_timer_start(widget->intro_timer, INTRO_DELAY);
